@@ -15,3 +15,25 @@ export async function PUT({ request }) {
     await fs.writeFile(dataPath, JSON.stringify(blogs, null, 2));
     return json({ success: true });
 }
+
+// @ts-ignore
+export async function POST({ request }) {
+    const { title, content } = await request.json();
+    
+    // Here, implement your logic to create a new blog post
+    const dataPath = path.join(process.cwd(), 'src', 'lib', 'data.json');
+    const data = await fs.readFile(dataPath, 'utf-8');
+    const blogs = JSON.parse(data);
+    
+    const newBlog = {
+        id: blogs.length + 1,
+        title,
+        content,
+        createdAt: new Date().toISOString()
+    };
+    
+    blogs.push(newBlog);
+    await fs.writeFile(dataPath, JSON.stringify(blogs, null, 2));
+
+    return json({ success: true, message: 'Blog created successfully' });
+}
